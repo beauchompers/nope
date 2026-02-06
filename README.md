@@ -20,30 +20,23 @@ NOPE is an MCP-enabled External Dynamic List (EDL) manager for Palo Alto firewal
 
 - Docker and Docker Compose
 
-### 1. Clone and Configure
+### 1. Clone and Start
 
 ```bash
 git clone <repository-url>
 cd nope-edl
-
-# Copy environment template (optional - defaults work for lab)
-cp .env.example .env
+./setup.sh
 ```
 
-### 2. Start the Stack
-
-```bash
-docker compose up -d
-```
+`setup.sh` will:
+- Create `.env` from `.env.example` (if it doesn't exist)
+- Auto-generate all required secrets
+- Start the Docker Compose stack
+- Print a startup banner with your credentials
 
 Self-signed SSL certificates are automatically generated on first startup.
 
-### 3. Access NOPE
-
-- **Web UI**: https://localhost:8081
-- **Default Login**: admin / admin
-
-To use a different port, set `NOPE_PORT` before starting:
+To use a different port, set `NOPE_PORT` in `.env` before running `setup.sh`, or:
 
 ```bash
 NOPE_PORT=9443 docker compose up -d
@@ -312,7 +305,7 @@ All actions performed via MCP are logged with the API key name used (e.g., `mcp:
 
 ### Required Environment Variables
 
-NOPE requires these environment variables to start. Copy `.env.example` to `.env` and fill in values:
+NOPE requires these environment variables to start. Running `./setup.sh` auto-generates all of them. To configure manually, copy `.env.example` to `.env` and fill in values:
 
 | Variable | Description |
 |----------|-------------|
@@ -321,7 +314,7 @@ NOPE requires these environment variables to start. Copy `.env.example` to `.env
 | `DEFAULT_EDL_PASSWORD` | EDL basic auth password (minimum 6 characters) |
 | `DB_PASSWORD` | PostgreSQL password |
 
-The app will refuse to start if these are missing or invalid.
+All passwords are validated at startup. The app will refuse to start if any required variable is missing or a password does not meet the minimum 6-character length requirement.
 
 ### All Environment Variables
 
