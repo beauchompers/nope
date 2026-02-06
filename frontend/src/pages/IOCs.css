@@ -1,0 +1,101 @@
+.iocs-page {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Stats Callout */
+.iocs-stats-callout {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-lg);
+}
+
+/* Search Form - matches Search page */
+.iocs-page .search-form-container {
+  margin-bottom: var(--space-xl);
+}
+
+.iocs-page .search-input-wrapper {
+  display: flex;
+  align-items: center;
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all var(--transition-fast);
+}
+
+.iocs-page .search-input-wrapper:focus-within {
+  border-color: var(--color-cyan);
+  box-shadow: 0 0 0 2px var(--color-cyan-subtle), var(--shadow-glow-cyan);
+}
+
+.iocs-page .search-prompt {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  color: var(--color-cyan);
+  padding: 0 var(--space-md) 0 var(--space-lg);
+}
+
+.iocs-page .search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  color: var(--color-text-primary);
+  padding: var(--space-md) var(--space-sm);
+  outline: none;
+}
+
+.iocs-page .search-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.iocs-page .search-input-wrapper .loading-spinner {
+  margin-right: var(--space-md);
+}
+
+/* IOC Value in table */
+.iocs-page .ioc-value {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--color-cyan);
+  background: transparent;
+  padding: 0;
+}
+
+/* IOC Type Badge - consistent with Search page */
+.iocs-page .ioc-type-badge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--color-cyan);
+  background-color: var(--color-cyan-subtle);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+}
+
+.list-count {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+/* Panel styling */
+.iocs-page .panel {
+  background-color: var(--color-bg-secondary);
+  overflow: hidden;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .iocs-page .search-prompt {
+    display: none;
+  }
+
+  .iocs-page .search-input {
+    padding: var(--space-md);
+  }
+}

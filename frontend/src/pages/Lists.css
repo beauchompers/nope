@@ -1,0 +1,82 @@
+.lists-page {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.lists-page .page-header {
+  margin-bottom: var(--space-lg);
+}
+
+/* Loading state */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xl);
+  gap: var(--space-md);
+}
+
+/* List table styling */
+.list-name {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.list-slug {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--color-cyan);
+  background-color: transparent;
+  padding: 0;
+}
+
+.tags-cell {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.tag-overflow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.list-type-badge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--color-cyan);
+  background-color: var(--color-cyan-subtle);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+}
+
+/* Panel styling */
+.lists-page .panel {
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+/* Data table row hover effect */
+.lists-page .data-table tr.clickable:hover td {
+  background-color: var(--color-bg-hover);
+}
+
+.lists-page .data-table tr.clickable:hover .list-slug {
+  text-shadow: 0 0 8px var(--color-cyan);
+}
+
+/* Modal form adjustments */
+.modal-content textarea {
+  font-family: var(--font-sans);
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Empty state button */
+.lists-page .empty-state .btn {
+  margin-top: var(--space-lg);
+}

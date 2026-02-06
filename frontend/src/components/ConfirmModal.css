@@ -1,0 +1,12 @@
+.confirm-modal {
+  max-width: 400px;
+}
+
+.confirm-message {
+  padding: var(--spacing-md) 0;
+}
+
+.confirm-message p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}

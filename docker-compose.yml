@@ -1,0 +1,53 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: nope
+      POSTGRES_USER: ${DB_USER:-nope}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-nope}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-nope} -d nope"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: ./backend
+    environment:
+      - DATABASE_URL=postgresql+psycopg://${DB_USER:-nope}:${DB_PASSWORD}@db:5432/nope
+      - SECRET_KEY=${SECRET_KEY}
+      - DEFAULT_ADMIN_USER=${DEFAULT_ADMIN_USER:-admin}
+      - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD}
+      - DEFAULT_EDL_USER=${DEFAULT_EDL_USER:-edl}
+      - DEFAULT_EDL_PASSWORD=${DEFAULT_EDL_PASSWORD}
+      - EDL_OUTPUT_DIR=/app/edl
+    volumes:
+      - edl_files:/app/edl
+    depends_on:
+      db:
+        condition: service_healthy
+
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    ports:
+      - "${NOPE_PORT:-8081}:${NOPE_PORT:-8081}"
+    environment:
+      LISTEN_PORT: ${NOPE_PORT:-8081}
+      EDL_USER: ${DEFAULT_EDL_USER:-admin}
+      EDL_PASSWORD: ${DEFAULT_EDL_PASSWORD:-admin}
+    volumes:
+      # Custom certs: mount your certs here to override auto-generated ones
+      # - ./my-certs:/etc/nginx/certs:ro
+      - nginx_certs:/etc/nginx/certs
+      - edl_files:/var/www/edl:ro
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
+  edl_files:
+  nginx_certs:
