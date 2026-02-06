@@ -97,8 +97,8 @@ async def authenticate_user_with_lockout(
     if not user:
         return None
 
-    # Check if account is locked (compare as naive UTC datetimes)
-    now = datetime.now(timezone.utc).replace(tzinfo=None)
+    # Check if account is locked
+    now = datetime.now(timezone.utc)
     if user.locked_until and user.locked_until > now:
         raise AccountLockedError(user.locked_until)
 
@@ -118,9 +118,9 @@ async def authenticate_user_with_lockout(
     # Failed login - increment counter
     user.failed_attempts += 1
 
-    # Lock account after max attempts (store as naive UTC)
+    # Lock account after max attempts
     if user.failed_attempts >= MAX_FAILED_ATTEMPTS:
-        user.locked_until = (datetime.now(timezone.utc) + timedelta(minutes=LOCKOUT_DURATION_MINUTES)).replace(tzinfo=None)
+        user.locked_until = datetime.now(timezone.utc) + timedelta(minutes=LOCKOUT_DURATION_MINUTES)
 
     await db.commit()
     return None

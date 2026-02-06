@@ -29,13 +29,10 @@ async def login(
 ):
     try:
         user = await authenticate_user_with_lockout(db, form_data.username, form_data.password)
-    except AccountLockedError:
-        # Return generic 401 to prevent user enumeration
-        # The lockout is still enforced server-side
+    except AccountLockedError as e:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
+            status_code=423,
+            detail=f"Account locked until {e.locked_until.isoformat()}",
         )
 
     if not user:
