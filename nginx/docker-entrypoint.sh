@@ -4,7 +4,7 @@ set -e
 CERT_DIR="/etc/nginx/certs"
 CERT_FILE="$CERT_DIR/cert.pem"
 KEY_FILE="$CERT_DIR/key.pem"
-HTPASSWD_FILE="$CERT_DIR/.htpasswd"
+HTPASSWD_FILE="/var/www/edl/.htpasswd"
 
 # Default port
 LISTEN_PORT="${LISTEN_PORT:-8081}"

@@ -42,7 +42,7 @@ services:
     volumes:
       # Custom certs: uncomment to use your own certificates
       # - ./certs:/etc/nginx/certs:ro
-      - edl_files:/var/www/edl:ro
+      - edl_files:/var/www/edl
     depends_on:
       - api
 
