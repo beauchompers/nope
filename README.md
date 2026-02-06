@@ -333,19 +333,21 @@ All passwords are validated at startup. The app will refuse to start if any requ
 
 By default, self-signed certificates are generated automatically. For production, provide your own certificates:
 
-1. Create a directory with your certificates:
+1. Place your certificates in a `certs` directory:
    ```bash
-   mkdir my-certs
-   cp your-cert.pem my-certs/cert.pem
-   cp your-key.pem my-certs/key.pem
+   mkdir certs
+   cp your-cert.pem certs/cert.pem
+   cp your-key.pem certs/key.pem
    ```
 
-2. Update `docker-compose.yml` to mount your certs:
+2. Uncomment the bind mount in `docker-compose.yml`:
    ```yaml
    nginx:
      volumes:
-       - ./my-certs:/etc/nginx/certs:ro  # Uncomment and update path
+       - ./certs:/etc/nginx/certs:ro
    ```
+
+3. Restart the stack: `docker compose up -d`
 
 ### Palo Alto Firewall Configuration
 

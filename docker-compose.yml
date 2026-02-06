@@ -40,9 +40,8 @@ services:
       EDL_USER: ${DEFAULT_EDL_USER:-admin}
       EDL_PASSWORD: ${DEFAULT_EDL_PASSWORD:-admin}
     volumes:
-      # Custom certs: mount your certs here to override auto-generated ones
-      # - ./my-certs:/etc/nginx/certs:ro
-      - nginx_certs:/etc/nginx/certs
+      # Custom certs: uncomment to use your own certificates
+      # - ./certs:/etc/nginx/certs:ro
       - edl_files:/var/www/edl:ro
     depends_on:
       - api
@@ -50,4 +49,3 @@ services:
 volumes:
   postgres_data:
   edl_files:
-  nginx_certs:
