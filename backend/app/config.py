@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     # Default credentials - usernames have defaults, passwords do not
     default_admin_user: str = "admin"
     default_admin_password: str = ""
-    default_edl_user: str = "admin"
+    default_edl_user: str = "edl"
     default_edl_password: str = ""
 
     class Config:

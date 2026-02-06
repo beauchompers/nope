@@ -24,7 +24,7 @@ def upgrade() -> None:
         'api_keys',
         sa.Column('id', sa.Integer(), primary_key=True),
         sa.Column('name', sa.String(100), unique=True, nullable=False),
-        sa.Column('key', sa.String(255), nullable=False),  # Encrypted with Fernet
+        sa.Column('key', sa.String(255), nullable=False),
         sa.Column('created_at', sa.DateTime(), server_default=sa.func.now()),
         sa.Column('last_used_at', sa.DateTime(), nullable=True),
     )
