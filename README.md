@@ -4,6 +4,12 @@
 
 NOPE is an MCP-enabled External Dynamic List (EDL) manager for Palo Alto firewalls. It provides a web UI, REST API, and MCP tools for managing IP and domain blocklists that firewalls consume via HTTPS.
 
+## Screenshots
+
+![Dashboard](screenshots/nope%20-%20dashboard.png)
+
+![Domain Block List](screenshots/nope%20-%20domain%20block%20list.png)
+
 ## Features
 
 - **Web UI** - Modern React interface for managing lists and IOCs
