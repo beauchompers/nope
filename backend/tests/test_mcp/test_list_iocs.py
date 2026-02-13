@@ -25,12 +25,14 @@ class TestListIocs:
 
             result = await list_iocs.fn("threat-domains", limit=100, offset=0)
 
-            assert "evil.com" in result
-            assert "domain" in result
+            assert result.found is True
+            assert len(result.iocs) == 1
+            assert result.iocs[0].value == "evil.com"
+            assert result.iocs[0].ioc_type == "domain"
 
     @pytest.mark.asyncio
     async def test_list_iocs_shows_pagination_hint(self):
-        """Should show pagination hint when more results exist."""
+        """Should indicate more results when they exist."""
         from app.mcp.tools import list_iocs
 
         mock_iocs = [MagicMock(value=f"ip{i}.com", type="domain") for i in range(100)]
@@ -43,7 +45,8 @@ class TestListIocs:
 
             result = await list_iocs.fn("threat-domains", limit=100, offset=0)
 
-            assert "offset=100" in result
+            assert result.has_more is True
+            assert result.total == 250
 
     @pytest.mark.asyncio
     async def test_list_iocs_returns_error_for_nonexistent_list(self):
@@ -58,4 +61,5 @@ class TestListIocs:
 
             result = await list_iocs.fn("nonexistent")
 
-            assert "not found" in result.lower()
+            assert result.found is False
+            assert "not found" in result.message.lower()

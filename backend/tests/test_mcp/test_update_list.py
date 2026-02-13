@@ -30,7 +30,8 @@ class TestUpdateList:
             result = await update_list.fn("old-name", name="New Name")
 
             assert mock_list.name == "New Name"
-            assert "updated" in result.lower()
+            assert result.success is True
+            assert "name" in result.updated_fields
 
     @pytest.mark.asyncio
     async def test_update_list_returns_error_for_nonexistent(self):
@@ -47,7 +48,8 @@ class TestUpdateList:
 
             result = await update_list.fn("nonexistent", name="New Name")
 
-            assert "not found" in result.lower()
+            assert result.success is False
+            assert "not found" in result.message.lower()
 
     @pytest.mark.asyncio
     async def test_update_list_with_no_changes(self):
@@ -56,4 +58,5 @@ class TestUpdateList:
 
         result = await update_list.fn("some-list")
 
-        assert "no updates" in result.lower()
+        assert result.success is False
+        assert "no updates" in result.message.lower()

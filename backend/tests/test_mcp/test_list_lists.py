@@ -27,7 +27,8 @@ class TestListListsTagFilter:
         mock_stmt.where.return_value = mock_stmt
 
         with patch("app.mcp.tools.async_session_maker") as mock_session_maker, \
-             patch("app.mcp.tools.select", return_value=mock_stmt):
+             patch("app.mcp.tools.select", return_value=mock_stmt), \
+             patch("app.mcp.tools.get_edl_base_url", return_value="https://nope.local:8081"):
             mock_session = AsyncMock()
             mock_session_maker.return_value.__aenter__.return_value = mock_session
 
@@ -37,7 +38,9 @@ class TestListListsTagFilter:
 
             result = await list_lists.fn(tag="threat-intel")
 
-            assert "Threat IPs" in result
+            assert len(result.lists) == 1
+            assert result.lists[0].name == "Threat IPs"
+            assert result.lists[0].slug == "threat-ips"
             # Verify that where was called (indicating tag filter was applied)
             mock_stmt.where.assert_called_once()
 
@@ -53,7 +56,8 @@ class TestListListsTagFilter:
         mock_stmt.where.return_value = mock_stmt
 
         with patch("app.mcp.tools.async_session_maker") as mock_session_maker, \
-             patch("app.mcp.tools.select", return_value=mock_stmt):
+             patch("app.mcp.tools.select", return_value=mock_stmt), \
+             patch("app.mcp.tools.get_edl_base_url", return_value="https://nope.local:8081"):
             mock_session = AsyncMock()
             mock_session_maker.return_value.__aenter__.return_value = mock_session
 
@@ -63,6 +67,6 @@ class TestListListsTagFilter:
 
             result = await list_lists.fn()
 
-            assert "No lists found" in result
+            assert len(result.lists) == 0
             # Verify that where was NOT called (no tag filter)
             mock_stmt.where.assert_not_called()

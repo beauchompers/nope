@@ -21,7 +21,7 @@ class TestUpdateIoc:
 
             result = await update_ioc.fn("evil.com", "New intel from threat feed")
 
-            assert "comment added" in result.lower() or "added" in result.lower()
+            assert result.success is True
             mock_add_comment.assert_called_once()
 
     @pytest.mark.asyncio
@@ -37,4 +37,5 @@ class TestUpdateIoc:
 
             result = await update_ioc.fn("nonexistent.com", "comment")
 
-            assert "not found" in result.lower()
+            assert result.success is False
+            assert "not found" in result.message.lower()

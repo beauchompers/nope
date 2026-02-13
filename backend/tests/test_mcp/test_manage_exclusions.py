@@ -25,8 +25,9 @@ class TestAddExclusion:
 
             result = await add_exclusion.fn("internal.corp", "Internal domain")
 
-            assert "added" in result.lower()
-            assert "internal.corp" in result
+            assert result.success is True
+            assert result.value == "internal.corp"
+            assert result.exclusion_type == "domain"
 
     @pytest.mark.asyncio
     async def test_shows_purged_when_purge_conflicts(self):
@@ -50,8 +51,9 @@ class TestAddExclusion:
 
             result = await add_exclusion.fn("10.0.0.0/8", "Private", purge_conflicts=True)
 
-            assert "purged" in result.lower()
-            assert "10.1.2.3" in result
+            assert len(result.purged) == 1
+            assert result.purged[0].value == "10.1.2.3"
+            assert "purged" in result.message.lower()
 
 
 class TestRemoveExclusion:
@@ -70,7 +72,7 @@ class TestRemoveExclusion:
 
             result = await remove_exclusion.fn("internal.corp")
 
-            assert "removed" in result.lower()
+            assert result.success is True
 
     @pytest.mark.asyncio
     async def test_rejects_builtin_removal(self):
@@ -86,7 +88,8 @@ class TestRemoveExclusion:
 
             result = await remove_exclusion.fn("10.0.0.0/8")
 
-            assert "cannot" in result.lower() or "builtin" in result.lower()
+            assert result.success is False
+            assert "cannot" in result.message.lower() or "built-in" in result.message.lower()
 
     @pytest.mark.asyncio
     async def test_returns_not_found(self):
@@ -101,4 +104,5 @@ class TestRemoveExclusion:
 
             result = await remove_exclusion.fn("nonexistent.com")
 
-            assert "not found" in result.lower()
+            assert result.success is False
+            assert "not found" in result.message.lower()

@@ -10,7 +10,7 @@ class TestListExclusions:
 
     @pytest.mark.asyncio
     async def test_formats_exclusions_by_type(self):
-        """Should format exclusions grouped by builtin vs user-defined."""
+        """Should return exclusions grouped by builtin vs user-defined."""
         from app.mcp.tools import list_exclusions
 
         mock_builtin = MagicMock()
@@ -34,11 +34,14 @@ class TestListExclusions:
 
             result = await list_exclusions.fn()
 
-            assert "Built-in" in result
-            assert "10.0.0.0/8" in result
-            assert "RFC1918" in result
-            assert "User-defined" in result
-            assert "internal.corp" in result
+            assert result.total == 2
+            builtin = [e for e in result.exclusions if e.builtin]
+            user_defined = [e for e in result.exclusions if not e.builtin]
+            assert len(builtin) == 1
+            assert builtin[0].value == "10.0.0.0/8"
+            assert builtin[0].reason == "RFC1918"
+            assert len(user_defined) == 1
+            assert user_defined[0].value == "internal.corp"
 
     @pytest.mark.asyncio
     async def test_handles_empty_exclusions(self):
@@ -56,4 +59,5 @@ class TestListExclusions:
 
             result = await list_exclusions.fn()
 
-            assert "No exclusion rules" in result or "0 total" in result
+            assert result.total == 0
+            assert result.exclusions == []

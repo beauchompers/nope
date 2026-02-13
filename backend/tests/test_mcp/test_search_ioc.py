@@ -14,7 +14,7 @@ class TestSearchIocListFilter:
 
         mock_ioc = MagicMock()
         mock_ioc.value = "evil.com"
-        mock_ioc.type.value = "domain"
+        mock_ioc.type = "domain"
         mock_list_ioc = MagicMock()
         mock_list_ioc.list.slug = "threat-domains"
         mock_ioc.list_iocs = [mock_list_ioc]
@@ -28,6 +28,8 @@ class TestSearchIocListFilter:
 
             result = await search_ioc.fn("evil", list_slug="threat-domains")
 
+            assert result.total == 1
+            assert result.matches[0].value == "evil.com"
             mock_search.assert_called_once()
             call_args = mock_search.call_args
             assert call_args.kwargs.get("list_slug") == "threat-domains"
@@ -43,7 +45,9 @@ class TestSearchIocListFilter:
             mock_session_maker.return_value.__aenter__.return_value = mock_session
             mock_search.return_value = []
 
-            await search_ioc.fn("test")
+            result = await search_ioc.fn("test")
 
+            assert result.total == 0
+            assert result.matches == []
             call_args = mock_search.call_args
             assert call_args.kwargs.get("list_slug") is None

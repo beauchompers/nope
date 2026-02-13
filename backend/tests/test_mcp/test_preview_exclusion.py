@@ -25,9 +25,10 @@ class TestPreviewExclusion:
 
             result = await preview_exclusion.fn("10.0.0.0/8")
 
-            assert "10.1.2.3" in result
-            assert "threat-ips" in result
-            assert "conflict" in result.lower()
+            assert result.safe_to_add is False
+            assert len(result.conflicts) == 1
+            assert result.conflicts[0].value == "10.1.2.3"
+            assert "threat-ips" in result.conflicts[0].lists
 
     @pytest.mark.asyncio
     async def test_shows_safe_when_no_conflicts(self):
@@ -44,7 +45,8 @@ class TestPreviewExclusion:
 
             result = await preview_exclusion.fn("192.168.0.0/16")
 
-            assert "no conflict" in result.lower() or "safe" in result.lower()
+            assert result.safe_to_add is True
+            assert result.conflicts == []
 
     @pytest.mark.asyncio
     async def test_rejects_invalid_pattern(self):
@@ -56,4 +58,5 @@ class TestPreviewExclusion:
 
             result = await preview_exclusion.fn("invalid-pattern")
 
-            assert "invalid" in result.lower()
+            assert "invalid" in result.message.lower()
+            assert result.safe_to_add is False

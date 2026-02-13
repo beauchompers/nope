@@ -26,8 +26,8 @@ class TestBulkUnblockIoc:
                 list_slug="threat-domains",
             )
 
-            assert "2" in result  # 2 removed
-            assert "1" in result  # 1 not found
+            assert result.removed == 2
+            assert result.not_found == 1
 
     @pytest.mark.asyncio
     async def test_bulk_unblock_requires_list_slug_or_all_lists(self):
@@ -36,7 +36,7 @@ class TestBulkUnblockIoc:
 
         result = await bulk_unblock_ioc.fn(values=["evil.com"])
 
-        assert "must specify" in result.lower()
+        assert "must specify" in result.message.lower()
 
     @pytest.mark.asyncio
     async def test_bulk_unblock_rejects_over_500(self):
@@ -46,8 +46,8 @@ class TestBulkUnblockIoc:
         values = [f"evil{i}.com" for i in range(501)]
         result = await bulk_unblock_ioc.fn(values=values, list_slug="test-list")
 
-        assert "Maximum 500" in result
-        assert "501" in result
+        assert "Maximum 500" in result.message
+        assert "501" in result.message
 
     @pytest.mark.asyncio
     async def test_bulk_unblock_rejects_empty_list(self):
@@ -56,7 +56,7 @@ class TestBulkUnblockIoc:
 
         result = await bulk_unblock_ioc.fn(values=[], list_slug="test-list")
 
-        assert "No IOCs provided" in result
+        assert "No IOCs provided" in result.message
 
     @pytest.mark.asyncio
     async def test_bulk_unblock_all_lists(self):
@@ -77,8 +77,8 @@ class TestBulkUnblockIoc:
                 all_lists=True,
             )
 
-            assert "all lists" in result
-            assert "1" in result  # 1 removed
+            assert "all lists" in result.message
+            assert result.removed == 1
             mock_bulk_remove.assert_called_once()
             call_kwargs = mock_bulk_remove.call_args[1]
             assert call_kwargs["all_lists"] is True
@@ -102,6 +102,5 @@ class TestBulkUnblockIoc:
                 list_slug="test-list",
             )
 
-            assert "Not found:" in result
-            assert "missing1.com" in result
-            assert "missing2.com" in result
+            assert "missing1.com" in result.not_found_items
+            assert "missing2.com" in result.not_found_items

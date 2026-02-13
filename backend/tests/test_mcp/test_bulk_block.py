@@ -28,9 +28,10 @@ class TestBulkBlockIoc:
                 list_slug="threat-domains",
             )
 
-            assert "2" in result  # 2 added
-            assert "1" in result  # 1 skipped
-            assert "RFC1918" in result
+            assert result.added == 2
+            assert result.skipped == 1
+            assert result.failed == 1
+            assert result.failed_items[0].reason == "RFC1918 private range"
 
     @pytest.mark.asyncio
     async def test_bulk_block_enforces_limit(self):
@@ -42,7 +43,8 @@ class TestBulkBlockIoc:
             list_slug="test",
         )
 
-        assert "500" in result
+        assert "500" in result.message
+        assert result.failed == 501
 
     @pytest.mark.asyncio
     async def test_bulk_block_handles_list_not_found(self):
@@ -58,4 +60,4 @@ class TestBulkBlockIoc:
 
             result = await bulk_block_ioc.fn(values=["evil.com"], list_slug="nonexistent")
 
-            assert "not found" in result.lower()
+            assert "not found" in result.message.lower()
