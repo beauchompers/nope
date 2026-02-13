@@ -56,7 +56,7 @@ pytest -x --lf                                  # Stop on first failure, rerun l
 - `services/` - Business logic (ioc_service, validation, exclusion_service, auth)
 - `models/` - SQLAlchemy ORM models (List, IOC, ListIOC, UIUser, Exclusion, APIKey)
 - `schemas/` - Pydantic request/response models
-- `mcp/tools.py` - 17 MCP tools for LLM integration
+- `mcp/tools.py` - 16 MCP tools for LLM integration (response models defined inline)
 - `middleware/` - API key auth, rate limiting
 
 **Key patterns:**
@@ -64,6 +64,19 @@ pytest -x --lf                                  # Stop on first failure, rerun l
 - FastAPI `Depends()` for DB sessions, auth, current user
 - RBAC via `require_admin()`, `require_role()` dependencies
 - IOC validation pipeline: type detection → exclusion check → uniqueness check
+
+### MCP Tools (`backend/app/mcp/tools.py`)
+
+Tools follow the [MCP spec (2025-06-18)](https://modelcontextprotocol.io/specification/2025-06-18/server/tools). Every tool must have:
+
+- **`inputSchema`**: Use `Annotated[type, Field(description="...")]` for all parameters — FastMCP does NOT parse docstring `Args:` sections into `inputSchema`
+- **`outputSchema`**: Return a Pydantic `BaseModel` subclass (not a string). FastMCP auto-generates `outputSchema` from the return type and returns `structuredContent` in responses
+- **`annotations`**: Use `@mcp.tool(annotations=ToolAnnotations(...))` with appropriate hints:
+  - `readOnlyHint=True` for queries (search, list, get, preview)
+  - `destructiveHint=True` for deletions and removals
+  - `idempotentHint=True` for operations safe to retry
+- **Response models**: Defined as `BaseModel` classes at the top of `tools.py` with `Field(description="...")` on every attribute
+- **`description`**: Tool docstrings become the MCP tool description — keep them concise and useful
 
 ### Frontend (`frontend/src/`)
 
