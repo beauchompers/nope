@@ -177,6 +177,10 @@
   animation: fadeIn 0.3s ease-out 0.2s both;
 }
 
+.settings-section:nth-child(6) {
+  animation: fadeIn 0.3s ease-out 0.25s both;
+}
+
 /* EDL Credential Panel */
 .credential-panel {
   display: flex;
@@ -285,58 +289,3 @@
   }
 }
 
-/* EDL URL Configuration */
-.edl-url-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.form-row-inline {
-  display: flex;
-  gap: 1rem;
-  align-items: flex-end;
-}
-
-.form-row-inline .form-group {
-  flex: 1;
-}
-
-.form-row-inline .form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-}
-
-.form-row-inline .form-group input {
-  width: 100%;
-}
-
-.edl-url-preview {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem;
-  background: var(--bg-tertiary);
-  border-radius: 4px;
-}
-
-.preview-label {
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-}
-
-.preview-url {
-  color: var(--text-primary);
-  font-size: 0.875rem;
-}
-
-.alert-success {
-  background-color: rgba(16, 185, 129, 0.1);
-  border: 1px solid var(--color-success);
-  color: var(--color-success);
-  padding: 0.75rem 1rem;
-  border-radius: 4px;
-}

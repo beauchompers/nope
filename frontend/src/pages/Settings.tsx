@@ -86,10 +86,10 @@ export default function Settings() {
   const [apiKeyDeleteError, setApiKeyDeleteError] = useState('');
 
   // EDL URL state
+  const [showChangeEdlUrl, setShowChangeEdlUrl] = useState(false);
   const [edlHost, setEdlHost] = useState('');
   const [edlPort, setEdlPort] = useState(8081);
   const [edlUrlError, setEdlUrlError] = useState('');
-  const [edlUrlSuccess, setEdlUrlSuccess] = useState(false);
 
   // Queries
   const { data: users } = useQuery({
@@ -132,13 +132,14 @@ export default function Settings() {
     },
   });
 
-  // Initialize EDL URL form when data loads
+  // Pre-fill EDL URL form when opening modal
   useEffect(() => {
-    if (edlUrlConfig) {
+    if (showChangeEdlUrl && edlUrlConfig) {
       setEdlHost(edlUrlConfig.host);
       setEdlPort(edlUrlConfig.port);
+      setEdlUrlError('');
     }
-  }, [edlUrlConfig]);
+  }, [showChangeEdlUrl, edlUrlConfig]);
 
   // Pre-fill credential form when opening modal
   useEffect(() => {
@@ -294,13 +295,11 @@ export default function Settings() {
       queryClient.invalidateQueries({ queryKey: ['settings-edl-url'] });
       queryClient.invalidateQueries({ queryKey: ['settings-config'] });
       setEdlUrlError('');
-      setEdlUrlSuccess(true);
-      setTimeout(() => setEdlUrlSuccess(false), 3000);
+      setShowChangeEdlUrl(false);
     },
     onError: (err: unknown) => {
       const error = err as { response?: { data?: { detail?: string } } };
       setEdlUrlError(error.response?.data?.detail || 'Failed to update EDL URL');
-      setEdlUrlSuccess(false);
     },
   });
 
@@ -346,51 +345,26 @@ export default function Settings() {
       <section className="settings-section">
         <h3 className="section-title">EDL URL Configuration</h3>
         <p className="section-description">
-          Configure the base URL for EDL links displayed in the UI and MCP tools
+          Base URL for EDL links displayed in the UI and MCP tools
         </p>
 
-        <div className="panel">
-          {edlUrlError && <div className="alert alert-error mb-md">{edlUrlError}</div>}
-          {edlUrlSuccess && <div className="alert alert-success mb-md">EDL URL updated successfully</div>}
-
-          <div className="edl-url-form">
-            <div className="form-row-inline">
-              <div className="form-group">
-                <label htmlFor="edl-host">Host</label>
-                <input
-                  id="edl-host"
-                  type="text"
-                  value={edlHost}
-                  onChange={(e) => setEdlHost(e.target.value)}
-                  placeholder="e.g., 192.168.1.50 or nope-server"
-                />
-              </div>
-              <div className="form-group" style={{ width: '120px' }}>
-                <label htmlFor="edl-port">Port</label>
-                <input
-                  id="edl-port"
-                  type="number"
-                  min={1}
-                  max={65535}
-                  value={edlPort}
-                  onChange={(e) => setEdlPort(parseInt(e.target.value) || 8081)}
-                />
-              </div>
+        <div className="panel credential-panel">
+          <div className="credential-display">
+            <div className="credential-row">
+              <span className="credential-label">HOST</span>
+              <code className="credential-value">{edlUrlConfig?.host || '—'}</code>
             </div>
-
-            <div className="edl-url-preview">
-              <span className="preview-label">Preview:</span>
-              <code className="preview-url">https://{edlHost || 'localhost'}:{edlPort}</code>
+            <div className="credential-row">
+              <span className="credential-label">PORT</span>
+              <code className="credential-value">{edlUrlConfig?.port || '—'}</code>
             </div>
-
-            <button
-              className="btn btn-primary"
-              onClick={() => updateEdlUrlMutation.mutate({ host: edlHost, port: edlPort })}
-              disabled={!edlHost || updateEdlUrlMutation.isPending}
-            >
-              {updateEdlUrlMutation.isPending ? 'SAVING...' : 'SAVE'}
-            </button>
           </div>
+          <button
+            className="btn btn-secondary"
+            onClick={() => setShowChangeEdlUrl(true)}
+          >
+            CHANGE
+          </button>
         </div>
       </section>
 
@@ -786,6 +760,62 @@ export default function Settings() {
                 disabled={updateUserMutation.isPending}
               >
                 {updateUserMutation.isPending ? 'SAVING...' : 'SAVE CHANGES'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Change EDL URL Modal */}
+      {showChangeEdlUrl && (
+        <div className="modal-overlay" onClick={() => setShowChangeEdlUrl(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2 className="modal-title">Change EDL URL</h2>
+              <button className="modal-close" onClick={() => setShowChangeEdlUrl(false)}>
+                &times;
+              </button>
+            </div>
+
+            {edlUrlError && <div className="alert alert-error mb-md">{edlUrlError}</div>}
+
+            <div className="form-group">
+              <label htmlFor="edl-host">Host</label>
+              <input
+                id="edl-host"
+                type="text"
+                value={edlHost}
+                onChange={(e) => setEdlHost(e.target.value)}
+                placeholder="e.g., 192.168.1.50 or nope-server"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="edl-port">Port</label>
+              <input
+                id="edl-port"
+                type="number"
+                min={1}
+                max={65535}
+                value={edlPort}
+                onChange={(e) => setEdlPort(parseInt(e.target.value) || 8081)}
+              />
+              <span className="form-hint">HTTPS port (1–65535)</span>
+            </div>
+
+            <div className="modal-actions">
+              <button
+                className="btn btn-secondary"
+                onClick={() => setShowChangeEdlUrl(false)}
+              >
+                CANCEL
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={() => updateEdlUrlMutation.mutate({ host: edlHost, port: edlPort })}
+                disabled={!edlHost || updateEdlUrlMutation.isPending}
+              >
+                {updateEdlUrlMutation.isPending ? 'SAVING...' : 'SAVE CHANGES'}
               </button>
             </div>
           </div>
