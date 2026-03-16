@@ -3,6 +3,7 @@ set -e
 
 # Fix ownership of mounted volumes (runs as root)
 chown -R appuser:appuser /app/edl
+chmod 755 /app/edl
 
 echo "Running database migrations..."
 # Run migrations as root (needs DB access)

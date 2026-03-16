@@ -15,11 +15,11 @@ COPY app ./app
 COPY alembic ./alembic
 COPY alembic.ini .
 
-# Create EDL output directory
-RUN mkdir -p /app/edl
-
 # Create non-root user for security
 RUN adduser --disabled-password --gecos '' --uid 1000 appuser
+
+# Create EDL output directory with correct ownership
+RUN mkdir -p /app/edl && chown appuser:appuser /app/edl
 
 EXPOSE 8000
 
