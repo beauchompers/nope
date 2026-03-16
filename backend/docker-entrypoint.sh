@@ -2,6 +2,8 @@
 set -e
 
 # Fix ownership of mounted volumes (runs as root)
+# Pre-create htpasswd file so it exists before dropping privileges
+touch /app/edl/.htpasswd
 chown -R appuser:appuser /app/edl
 chmod 755 /app/edl
 
